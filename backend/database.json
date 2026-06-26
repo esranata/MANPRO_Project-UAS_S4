@@ -1,0 +1,297 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin Utama",
+      "email": "admin@company.com",
+      "password": "$2a$08$HTbJ2XDp/vu7TWqhz/CUzu8CD5DscMXLAPWtN3nBw72QzeovBLGUS",
+      "role": "Admin",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "Staff Operasional",
+      "email": "staff@company.com",
+      "password": "$2a$08$0V7B390xbr2dxYqedzNMLuEqWgmul6tnjxJF4ROaYpZHwg0ozquoq",
+      "role": "Staff",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "name": "Manager Logistic",
+      "email": "manager@company.com",
+      "password": "$2a$08$HmA09CJYxGgn2R0hTQh6uOgia3TsX3VPa7fJEQvFT4MXi/BG.RJ5e",
+      "role": "Manager",
+      "status": "Active"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": 1,
+      "name": "PT Sumber Makmur",
+      "address": "Jl. Industri No. 12, Cikarang, Bekasi",
+      "phone": "021-8901234",
+      "email": "info@sumbermakmur.com",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "CV Global Niaga",
+      "address": "Kawasan Pergudangan Margomulyo Indah Blok C-5, Surabaya",
+      "phone": "031-7491029",
+      "email": "sales@globalniaga.co.id",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "name": "PT Logistik Sentosa",
+      "address": "Jl. Gatot Subroto Kav. 55, Jakarta Selatan",
+      "phone": "021-5290123",
+      "email": "admin@logistiksentosa.com",
+      "status": "Inactive"
+    },
+    {
+      "id": 4,
+      "name": "PT. Karya ",
+      "address": "JL BUNGA A5 NO1 BELAWAN KOTA MEDAN PROVINSI SUMATRA UTARA",
+      "phone": "083110569327",
+      "email": "edisianturi44@gmail.com",
+      "status": "Active"
+    }
+  ],
+  "warehouses": [
+    {
+      "id": "WH-001",
+      "name": "Gudang Utama Jakarta",
+      "location": "Sunter, Jakarta Utara",
+      "capacity": 5000,
+      "status": "Active"
+    },
+    {
+      "id": "WH-002",
+      "name": "Gudang Hub Surabaya",
+      "location": "Margomulyo, Surabaya",
+      "capacity": 3000,
+      "status": "Active"
+    },
+    {
+      "id": "WH-003",
+      "name": "Gudang Transit Semarang",
+      "location": "Kawasan Industri Candi, Semarang",
+      "capacity": 1500,
+      "status": "Inactive"
+    },
+    {
+      "id": "WH-05",
+      "name": "Gudang Sumatera Utara",
+      "location": "JL. Berastagi",
+      "capacity": 5000,
+      "status": "Active"
+    }
+  ],
+  "goods": [
+    {
+      "id": 1,
+      "code": "BRG-001",
+      "name": "Semen Portland 50kg",
+      "warehouseId": "WH-001",
+      "stock": 120,
+      "incomingQty": 0,
+      "status": "Accepted"
+    },
+    {
+      "id": 2,
+      "code": "BRG-002",
+      "name": "Besi Beton 12mm",
+      "warehouseId": "WH-001",
+      "stock": 0,
+      "incomingQty": 450,
+      "status": "Pending"
+    },
+    {
+      "id": 3,
+      "code": "BRG-003",
+      "name": "Cat Tembok Putih 20L",
+      "warehouseId": "WH-002",
+      "stock": 85,
+      "incomingQty": 50,
+      "status": "Pending"
+    }
+  ],
+  "distributors": [
+    {
+      "id": "DST-001",
+      "name": "CV Sinar Abadi",
+      "regionId": "REG-DKI",
+      "phone": "0812-3456-7890",
+      "status": "Active"
+    },
+    {
+      "id": "DST-002",
+      "name": "PT Indo Distribusi",
+      "regionId": "REG-JABAR",
+      "phone": "0811-987-654",
+      "status": "Active"
+    },
+    {
+      "id": "DST-003",
+      "name": "CV Mandiri Jaya",
+      "regionId": "REG-JATIM",
+      "phone": "0822-4455-6677",
+      "status": "Active"
+    }
+  ],
+  "regions": [
+    {
+      "id": "REG-DKI",
+      "name": "DKI Jakarta"
+    },
+    {
+      "id": "REG-JABAR",
+      "name": "Jawa Barat"
+    },
+    {
+      "id": "REG-JATENG",
+      "name": "Jawa Tengah"
+    },
+    {
+      "id": "REG-JATIM",
+      "name": "Jawa Timur"
+    }
+  ],
+  "logs": [
+    {
+      "id": 19,
+      "timestamp": "2026-06-26T10:22:39.233Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 18,
+      "timestamp": "2026-06-19T08:51:03.069Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "Menambahkan Supplier Baru: PT. Karya "
+    },
+    {
+      "id": 17,
+      "timestamp": "2026-06-19T08:49:44.462Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 16,
+      "timestamp": "2026-06-15T07:20:37.518Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 15,
+      "timestamp": "2026-06-15T07:14:26.279Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 14,
+      "timestamp": "2026-06-15T07:13:47.437Z",
+      "userId": 3,
+      "userName": "Manager Logistic",
+      "action": "User Manager berhasil login"
+    },
+    {
+      "id": 13,
+      "timestamp": "2026-06-15T07:13:33.252Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 12,
+      "timestamp": "2026-06-15T07:12:27.121Z",
+      "userId": 3,
+      "userName": "Manager Logistic",
+      "action": "User Manager berhasil login"
+    },
+    {
+      "id": 11,
+      "timestamp": "2026-06-13T14:00:39.859Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 10,
+      "timestamp": "2026-06-13T13:58:29.262Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 9,
+      "timestamp": "2026-06-13T12:55:53.908Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "Menambahkan Gudang Baru: Gudang Sumatera Utara (WH-05)"
+    },
+    {
+      "id": 8,
+      "timestamp": "2026-06-13T12:53:49.058Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 7,
+      "timestamp": "2026-06-13T12:46:45.232Z",
+      "userId": 3,
+      "userName": "Manager Logistic",
+      "action": "User Manager berhasil login"
+    },
+    {
+      "id": 6,
+      "timestamp": "2026-06-13T12:45:51.170Z",
+      "userId": 2,
+      "userName": "Staff Operasional",
+      "action": "User Staff berhasil login"
+    },
+    {
+      "id": 5,
+      "timestamp": "2026-06-13T12:44:59.526Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "Menghapus Supplier: PT Garuda"
+    },
+    {
+      "id": 4,
+      "timestamp": "2026-06-13T12:44:45.338Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "Menambahkan Supplier Baru: PT Garuda"
+    },
+    {
+      "id": 3,
+      "timestamp": "2026-06-13T12:42:30.903Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 2,
+      "timestamp": "2026-06-13T12:39:23.555Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
+    {
+      "id": 1,
+      "timestamp": "2026-06-13T10:00:00.000Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "Inisialisasi sistem database"
+    }
+  ]
+}
