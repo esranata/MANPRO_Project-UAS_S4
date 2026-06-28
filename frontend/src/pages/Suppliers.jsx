@@ -30,7 +30,7 @@ export default function Suppliers({ user }) {
   const fetchSuppliers = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/suppliers', {
+      const res = await api.get('/api/suppliers', {
         search,
         status: statusFilter,
         page: currentPage,
@@ -92,9 +92,9 @@ export default function Suppliers({ user }) {
 
     try {
       if (modalMode === 'add') {
-        await api.post('/suppliers', formData);
+        await api.post('/api/suppliers', formData);
       } else {
-        await api.put(`/suppliers/${selectedSupplier.id}`, formData);
+        await api.put(`/api/suppliers/${selectedSupplier.id}`, formData);
       }
       setIsModalOpen(false);
       fetchSuppliers();
@@ -109,7 +109,7 @@ export default function Suppliers({ user }) {
   const handleDeleteSupplier = async (id, name) => {
     if (confirm(`Apakah Anda yakin ingin menghapus supplier: ${name}?`)) {
       try {
-        await api.delete(`/suppliers/${id}`);
+        await api.delete(`/api/suppliers/${id}`);
         fetchSuppliers();
       } catch (err) {
         alert(err.message || "Gagal menghapus data supplier!");

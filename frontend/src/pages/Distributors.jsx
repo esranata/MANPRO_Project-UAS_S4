@@ -29,8 +29,8 @@ export default function Distributors({ user }) {
     setLoading(true);
     try {
       const [distRes, regRes] = await Promise.all([
-        api.get('/distributors', { search }),
-        api.get('/regions')
+        api.get('/api/distributors', { search }),
+        api.get('/api/regions')
       ]);
       setDistributors(distRes);
       setRegions(regRes);
@@ -86,9 +86,9 @@ export default function Distributors({ user }) {
 
     try {
       if (modalMode === 'add') {
-        await api.post('/distributors', formData);
+        await api.post('/api/distributors', formData);
       } else {
-        await api.put(`/distributors/${formData.id}`, formData);
+        await api.put(`/api/distributors/${formData.id}`, formData);
       }
       setIsModalOpen(false);
       loadData();
@@ -103,7 +103,7 @@ export default function Distributors({ user }) {
   const handleDeleteDistributor = async (d) => {
     if (confirm(`Apakah Anda yakin ingin menghapus distributor: ${d.name} (${d.id})?`)) {
       try {
-        await api.delete(`/distributors/${d.id}`);
+        await api.delete(`/api/distributors/${d.id}`);
         loadData();
       } catch (err) {
         alert(err.message || "Gagal menghapus distributor!");

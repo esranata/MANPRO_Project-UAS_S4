@@ -66,9 +66,9 @@ export default function Regions({ user }) {
 
     try {
       if (modalMode === 'add') {
-        await api.post('/regions', formData);
+        await api.post('/api/regions', formData);
       } else {
-        await api.put(`/regions/${formData.id}`, formData);
+        await api.put(`/api/regions/${formData.id}`, formData);
       }
       setIsModalOpen(false);
       loadRegions();
@@ -83,7 +83,7 @@ export default function Regions({ user }) {
   const handleDeleteRegion = async (r) => {
     if (confirm(`Apakah Anda yakin ingin menghapus wilayah: ${r.name} (${r.id})?`)) {
       try {
-        await api.delete(`/regions/${r.id}`);
+        await api.delete(`/api/regions/${r.id}`);
         loadRegions();
       } catch (err) {
         alert(err.message || "Gagal menghapus wilayah!");

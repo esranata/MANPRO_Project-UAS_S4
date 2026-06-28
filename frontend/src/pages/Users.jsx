@@ -29,7 +29,7 @@ export default function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/users');
+      const res = await api.get('/api/users');
       setUsers(res);
     } catch (err) {
       console.error("Gagal memuat manajemen user:", err);
@@ -83,9 +83,9 @@ export default function Users() {
 
     try {
       if (modalMode === 'add') {
-        await api.post('/users', formData);
+        await api.post('/api/users', formData);
       } else {
-        await api.put(`/users/${selectedUser.id}`, {
+        await api.put(`/api/users/${selectedUser.id}`, {
           name: formData.name,
           email: formData.email,
           role: formData.role,
@@ -111,7 +111,7 @@ export default function Users() {
     setErrorMsg('');
 
     try {
-      await api.post(`/users/${selectedUser.id}/reset-password`, {
+      await api.post(`/api/users/${selectedUser.id}/reset-password`, {
         newPassword: resetPasswordVal
       });
       alert(`Password untuk user ${selectedUser.name} berhasil di-reset.`);
@@ -127,7 +127,7 @@ export default function Users() {
     const actionText = currentStatus === 'Active' ? 'menonaktifkan' : 'mengaktifkan';
     if (confirm(`Apakah Anda yakin ingin ${actionText} user: ${name}?`)) {
       try {
-        const res = await api.post(`/users/${id}/toggle-status`);
+        const res = await api.post(`/api/users/${id}/toggle-status`);
         alert(res.message);
         fetchUsers();
       } catch (err) {

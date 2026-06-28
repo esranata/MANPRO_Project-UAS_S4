@@ -10,7 +10,7 @@ export default function ActivityLog() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/logs');
+      const res = await api.get('/api/logs');
       setLogs(res || []);
     } catch (err) {
       console.error("Gagal memuat log aktivitas:", err);

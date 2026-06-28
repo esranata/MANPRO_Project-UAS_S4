@@ -28,7 +28,7 @@ export default function Warehouses({ user }) {
   const fetchWarehouses = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/warehouses', { search });
+      const res = await api.get('/api/warehouses', { search });
       setWarehouses(res);
     } catch (err) {
       console.error("Failed to load warehouses:", err);
@@ -50,7 +50,7 @@ export default function Warehouses({ user }) {
   const handleOpenDetail = async (id) => {
     setDetailLoading(true);
     try {
-      const res = await api.get(`/warehouses/${id}`);
+      const res = await api.get(`/api/warehouses/${id}`);
       setDetailWarehouse(res);
     } catch (err) {
       alert(err.message || "Gagal memuat detail gudang!");
@@ -95,9 +95,9 @@ export default function Warehouses({ user }) {
 
     try {
       if (modalMode === 'add') {
-        await api.post('/warehouses', formData);
+        await api.post('/api/warehouses', formData);
       } else {
-        await api.put(`/warehouses/${formData.id}`, formData);
+        await api.put(`/api/warehouses/${formData.id}`, formData);
       }
       setIsModalOpen(false);
       fetchWarehouses();
@@ -112,7 +112,7 @@ export default function Warehouses({ user }) {
   const handleDeleteWarehouse = async (wh) => {
     if (confirm(`Apakah Anda yakin ingin menghapus gudang: ${wh.name} (${wh.id})?`)) {
       try {
-        await api.delete(`/warehouses/${wh.id}`);
+        await api.delete(`/api/warehouses/${wh.id}`);
         fetchWarehouses();
       } catch (err) {
         alert(err.message || "Gagal menghapus gudang!");

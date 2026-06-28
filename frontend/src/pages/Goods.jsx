@@ -33,7 +33,7 @@ export default function Goods({ user }) {
     setLoading(true);
     try {
       const [goodsRes, warehousesRes] = await Promise.all([
-        api.get('/goods', {
+        api.get('/api/goods', {
           search,
           status: statusFilter,
           warehouseId: warehouseFilter
@@ -98,7 +98,7 @@ export default function Goods({ user }) {
     try {
       if (modalMode === 'add') {
         // Staff inputs incoming goods
-        await api.post('/goods', {
+        await api.post('/api/goods', {
           code: formData.code,
           name: formData.name,
           warehouseId: formData.warehouseId,
@@ -106,7 +106,7 @@ export default function Goods({ user }) {
         });
       } else {
         // Admin edits goods details
-        await api.put(`/goods/${selectedItem.id}`, formData);
+        await api.put(`/api/goods/${selectedItem.id}`, formData);
       }
       setIsModalOpen(false);
       loadData();
@@ -121,7 +121,7 @@ export default function Goods({ user }) {
   const handleAcceptGoods = async (id, name, qty) => {
     if (confirm(`Apakah Anda yakin menyetujui barang masuk: ${name} (+${qty} unit)? Stok aktif gudang akan terisi.`)) {
       try {
-        const res = await api.post(`/goods/${id}/accept`);
+        const res = await api.post(`/api/goods/${id}/accept`);
         alert(res.message);
         loadData();
       } catch (err) {
@@ -134,7 +134,7 @@ export default function Goods({ user }) {
   const handleDeleteGoods = async (id, name) => {
     if (confirm(`Apakah Anda yakin menghapus data barang: ${name}? (Tindakan ini untuk menghapus inputan yang tidak sesuai)`)) {
       try {
-        await api.delete(`/goods/${id}`);
+        await api.delete(`/api/goods/${id}`);
         loadData();
       } catch (err) {
         alert(err.message || "Gagal menghapus barang.");

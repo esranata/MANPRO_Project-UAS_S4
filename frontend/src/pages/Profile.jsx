@@ -30,7 +30,7 @@ export default function Profile({ user, onProfileUpdate }) {
     setProfileSuccess('');
 
     try {
-      const res = await api.put('/auth/update-profile', profileData);
+      const res = await api.put('/api/auth/update-profile', profileData);
       api.setUser(res.user);
       onProfileUpdate(res.user);
       setProfileSuccess("Profil Anda berhasil diperbarui!");
@@ -60,7 +60,7 @@ export default function Profile({ user, onProfileUpdate }) {
     setPassLoading(true);
 
     try {
-      await api.put('/auth/change-password', {
+      await api.put('/api/auth/change-password', {
         oldPassword: passwords.oldPassword,
         newPassword: passwords.newPassword
       });
