@@ -102,7 +102,7 @@ export default function Goods({ user }) {
           code: formData.code,
           name: formData.name,
           warehouseId: formData.warehouseId,
-          incomingQty: Number(formData.incomingQty)
+          incomingQty: formData.incomingQty
         });
       } else {
         // Admin edits goods details
