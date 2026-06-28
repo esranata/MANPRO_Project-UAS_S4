@@ -53,12 +53,12 @@ export default function Dashboard() {
   const fetchData = async () => {
     try {
       const [suppliersRes, warehousesRes, distributorsRes, regionsRes, logsRes, goodsRes] = await Promise.all([
-        api.get('/api/suppliers', { limit: 100 }),
-        api.get('/api/warehouses'),
-        api.get('/api/distributors'),
-        api.get('/api/regions'),
-        api.get('/api/logs'),
-        api.get('/api/goods')
+        api.get('/suppliers', { limit: 100 }),
+        api.get('/warehouses'),
+        api.get('/distributors'),
+        api.get('/regions'),
+        api.get('/logs'),
+        api.get('/goods')
       ]);
 
       // Calculate stats
