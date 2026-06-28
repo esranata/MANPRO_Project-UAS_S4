@@ -55,7 +55,7 @@ export default function Login({ onLoginSuccess }) {
           <div className="brand-content">
             <span className="brand-icon">📦</span>
             <h1>LOGISTIC HUB</h1>
-            <p>Sistem Pengelolaan Master Data Supplier, Gudang, Wilayah, & Alur Refill Barang Terintegrasi.</p>
+            <p>Sistem Pengelolaan Master Data Supplier, Gudang, Distributor, Wilayah, & Alur Refill Barang Terintegrasi.</p>
             
             {/* SVG Warehouse Schematic */}
             <svg className="warehouse-svg" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg">
