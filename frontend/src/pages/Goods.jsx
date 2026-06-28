@@ -29,19 +29,36 @@ export default function Goods({ user }) {
   const [formLoading, setFormLoading] = useState(false);
 
   // Load goods and warehouses
+ // Load goods and warehouses
   const loadData = async () => {
     setLoading(true);
     try {
+      // Buat objek kosong untuk menyaring parameter yang aman
+      const cleanParams = {};
+
+      // Masukkan parameter pencarian jika ada kata yang diketik
+      if (search && search.trim() !== '') {
+        cleanParams.search = search;
+      }
+
+      // HANYA kirim status ke backend jika pilihannya BUKAN 'All'
+      if (statusFilter !== 'All') {
+        cleanParams.status = statusFilter;
+      }
+
+      // HANYA kirim warehouseId jika pilihannya BUKAN 'All' dan ubah jadi Angka
+      if (warehouseFilter !== 'All') {
+        cleanParams.warehouseId = Number(warehouseFilter);
+      }
+
+      // Kirim cleanParams yang sudah bersih ke api.js Anda
       const [goodsRes, warehousesRes] = await Promise.all([
-        api.get('/goods', {
-          search,
-          status: statusFilter,
-          warehouseId: warehouseFilter
-        }),
+        api.get('/goods', cleanParams), 
         api.get('/warehouses')
       ]);
-      setGoods(goodsRes);
-      setWarehouses(warehousesRes.filter(w => w.status === 'Active'));
+
+      setGoods(goodsRes || []);
+      setWarehouses(warehousesRes?.filter(w => w.status === 'Active') || []);
     } catch (err) {
       console.error("Gagal memuat data logistik:", err);
     } finally {
@@ -91,40 +108,42 @@ export default function Goods({ user }) {
 
   // CRUD Form submit
   // Submit CRUD Form (Tambah / Edit Barang)
+ // Submit CRUD Form (Tambah / Edit Barang)
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
     setErrorMsg('');
 
     try {
-      if (modalMode === 'add') {
-        // Validasi jika gudang belum terpilih
-        if (!formData.warehouseId) {
-          setErrorMsg("Silakan pilih gudang tujuan terlebih dahulu!");
-          setFormLoading(false);
-          return;
-        }
+      // Validasi mencegah error jika user belum memilih gudang
+      if (!formData.warehouseId) {
+        setErrorMsg("Silakan pilih gudang tujuan terlebih dahulu!");
+        setFormLoading(false);
+        return;
+      }
 
+      if (modalMode === 'add') {
         // Staff / Admin menginput barang masuk baru
         await api.post('/goods', {
           code: formData.code,
           name: formData.name,
-          warehouseId: formData.warehouseId,
-          incomingQty: Number(formData.incomingQty) // <--- WAJIB dikonversi ke Angka asli
+          warehouseId: Number(formData.warehouseId), // <--- Mengubah string ke angka asli
+          incomingQty: Number(formData.incomingQty)   // <--- Mengubah string ke angka asli
         });
       } else {
         // Admin mengedit data barang yang sudah ada
-        await api.put(`/goods/${formData.id}`, {
+        await api.put(`/goods/${selectedItem.id}`, {
           code: formData.code,
           name: formData.name,
-          warehouseId: formData.warehouseId,
-          incomingQty: Number(formData.incomingQty), // <--- WAJIB dikonversi ke Angka asli
+          warehouseId: Number(formData.warehouseId),
+          incomingQty: Number(formData.incomingQty),
+          stock: Number(formData.stock),
           status: formData.status
         });
       }
       
       setIsModalOpen(false);
-      loadData(); // Memuat ulang tabel agar data baru langsung muncul
+      loadData(); // Memuat ulang tabel seketika agar data baru langsung muncul
     } catch (err) {
       setErrorMsg(err.message || "Gagal menyimpan data barang!");
     } finally {
@@ -395,13 +414,12 @@ export default function Goods({ user }) {
                     onChange={(e) => setFormData({...formData, warehouseId: e.target.value})}
                     required
                   >
-                    {warehouses.length === 0 ? (
-                      <option value="">Tidak ada gudang aktif!</option>
-                    ) : (
-                      warehouses.map(w => (
-                        <option key={w.id} value={w.id}>{w.name} ({w.location})</option>
-                      ))
-                    )}
+                    {/* Tambahkan baris default ini di paling atas */}
+                    <option value="">-- Pilih Gudang Tujuan --</option> 
+                    
+                    {warehouses.map(w => (
+                      <option key={w.id} value={w.id}>{w.name}</option>
+                    ))}
                   </select>
                 </div>
 
