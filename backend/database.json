@@ -116,6 +116,15 @@
       "stock": 85,
       "incomingQty": 50,
       "status": "Pending"
+    },
+    {
+      "id": 4,
+      "code": "BRS-009",
+      "name": "BERAS",
+      "warehouseId": "WH-002",
+      "stock": 0,
+      "incomingQty": 5000,
+      "status": "Pending"
     }
   ],
   "distributors": [
@@ -160,6 +169,20 @@
     }
   ],
   "logs": [
+    {
+      "id": 21,
+      "timestamp": "2026-06-28T12:10:52.033Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "Staff menginput barang masuk: BERAS (5000 unit) ke Gudang Hub Surabaya"
+    },
+    {
+      "id": 20,
+      "timestamp": "2026-06-28T12:10:06.920Z",
+      "userId": 1,
+      "userName": "Admin Utama",
+      "action": "User Admin berhasil login"
+    },
     {
       "id": 19,
       "timestamp": "2026-06-26T10:22:39.233Z",
