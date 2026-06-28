@@ -17,7 +17,7 @@ export const api = {
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/login';
+    window.location.href = 'https://manproproject-uass4-production.up.railway.app/';
   },
 
   async request(endpoint, options = {}) {
