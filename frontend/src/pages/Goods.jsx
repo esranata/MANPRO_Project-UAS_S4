@@ -90,6 +90,7 @@ export default function Goods({ user }) {
   };
 
   // CRUD Form submit
+  // Submit CRUD Form (Tambah / Edit Barang)
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
@@ -97,33 +98,51 @@ export default function Goods({ user }) {
 
     try {
       if (modalMode === 'add') {
-        // Staff inputs incoming goods
+        // Validasi jika gudang belum terpilih
+        if (!formData.warehouseId) {
+          setErrorMsg("Silakan pilih gudang tujuan terlebih dahulu!");
+          setFormLoading(false);
+          return;
+        }
+
+        // Staff / Admin menginput barang masuk baru
         await api.post('/goods', {
           code: formData.code,
           name: formData.name,
           warehouseId: formData.warehouseId,
-          incomingQty: formData.incomingQty
+          incomingQty: Number(formData.incomingQty) // <--- WAJIB dikonversi ke Angka asli
         });
       } else {
-        // Admin edits goods details
-        await api.put(`/goods/${selectedItem.id}`, formData);
+        // Admin mengedit data barang yang sudah ada
+        await api.put(`/goods/${formData.id}`, {
+          code: formData.code,
+          name: formData.name,
+          warehouseId: formData.warehouseId,
+          incomingQty: Number(formData.incomingQty), // <--- WAJIB dikonversi ke Angka asli
+          status: formData.status
+        });
       }
+      
       setIsModalOpen(false);
-      loadData();
+      loadData(); // Memuat ulang tabel agar data baru langsung muncul
     } catch (err) {
-      setErrorMsg(err.message || "Gagal menyimpan data!");
+      setErrorMsg(err.message || "Gagal menyimpan data barang!");
     } finally {
       setFormLoading(false);
     }
   };
 
   // Admin Accepts Incoming Goods (Refills Stock)
+ // Action untuk menyetujui barang masuk (Refill)
   const handleAcceptGoods = async (id, name, qty) => {
     if (confirm(`Apakah Anda yakin menyetujui barang masuk: ${name} (+${qty} unit)? Stok aktif gudang akan terisi.`)) {
       try {
-        const res = await api.post(`/goods/${id}/accept`);
-        alert(res.message);
-        loadData();
+        // Mengubah status barang menjadi 'Accepted' via rute PUT ke backend
+        await api.put(`/goods/${id}`, {
+          status: 'Accepted'
+        });
+        alert("Barang berhasil direfill!");
+        loadData(); // Memuat ulang tabel agar status langsung berubah menjadi 'Diterima'
       } catch (err) {
         alert(err.message || "Gagal menyetujui barang masuk.");
       }
