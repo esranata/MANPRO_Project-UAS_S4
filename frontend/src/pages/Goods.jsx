@@ -33,7 +33,7 @@ export default function Goods({ user }) {
     setLoading(true);
     try {
       const [goodsRes, warehousesRes] = await Promise.all([
-        api.get('/api/goods', {
+        api.get('/goods', {
           search,
           status: statusFilter,
           warehouseId: warehouseFilter
