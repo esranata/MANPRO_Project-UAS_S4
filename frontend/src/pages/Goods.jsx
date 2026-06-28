@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, X, Check, Package, Warehouse, AlertCircle } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, X, Check, Package, Warehouse, AlertCircle, Eye, CornerRightDown } from 'lucide-react';
 import { api } from '../utils/api';
 
 export default function Goods({ user }) {
@@ -12,7 +12,7 @@ export default function Goods({ user }) {
 
   // CRUD Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('add'); // 'add' atau 'edit'
+  const [modalMode, setModalMode] = useState('add'); // 'add' (staff input), 'edit' (admin edit)
   const [selectedItem, setSelectedItem] = useState(null);
   
   // Form State
@@ -21,29 +21,27 @@ export default function Goods({ user }) {
     name: '',
     warehouseId: '',
     incomingQty: '',
-    stock: '0',
+    stock: '0', // Admin edit only
     status: 'Pending'
   });
   
   const [errorMsg, setErrorMsg] = useState('');
   const [formLoading, setFormLoading] = useState(false);
 
-  // 1. MEMPERBAIKI CARA AMBIL DATA (MENGGUNAKAN PARAMS)
+  // Load goods and warehouses
   const loadData = async () => {
     setLoading(true);
     try {
       const [goodsRes, warehousesRes] = await Promise.all([
         api.get('/goods', {
-          params: {
-            search: search,
-            status: statusFilter,
-            warehouseId: warehouseFilter
-          }
+          search,
+          status: statusFilter,
+          warehouseId: warehouseFilter
         }),
         api.get('/warehouses')
       ]);
-      setGoods(goodsRes || []);
-      setWarehouses(warehousesRes.filter(w => w.status === 'Active') || []);
+      setGoods(goodsRes);
+      setWarehouses(warehousesRes.filter(w => w.status === 'Active'));
     } catch (err) {
       console.error("Gagal memuat data logistik:", err);
     } finally {
@@ -51,7 +49,6 @@ export default function Goods({ user }) {
     }
   };
 
-  // 2. MEMASTIKAN DATA LOG-IN DI AWAL & SETIAP FILTER BERUBAH
   useEffect(() => {
     loadData();
   }, [statusFilter, warehouseFilter]);
@@ -92,7 +89,7 @@ export default function Goods({ user }) {
     setIsModalOpen(true);
   };
 
-  // 3. MEMPERBAIKI PROSES SIMPAN DATA (POST & PUT)
+  // CRUD Form submit
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
@@ -100,53 +97,47 @@ export default function Goods({ user }) {
 
     try {
       if (modalMode === 'add') {
-        // Mengirimkan data inputan staff (Pastikan incomingQty dikonversi ke Number)
+        // Staff inputs incoming goods
         await api.post('/goods', {
           code: formData.code,
           name: formData.name,
-          warehouseId: Number(formData.warehouseId),
+          warehouseId: formData.warehouseId,
           incomingQty: Number(formData.incomingQty)
         });
       } else {
-        // Admin melakukan update/edit data
-        await api.put(`/goods/${selectedItem.id}`, {
-          ...formData,
-          warehouseId: Number(formData.warehouseId),
-          incomingQty: Number(formData.incomingQty),
-          stock: Number(formData.stock)
-        });
+        // Admin edits goods details
+        await api.put(`/goods/${selectedItem.id}`, formData);
       }
       setIsModalOpen(false);
-      // Panggil ulang loadData agar data terbaru langsung muncul di tabel
       loadData();
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || err.message || "Gagal menyimpan data!");
+      setErrorMsg(err.message || "Gagal menyimpan data!");
     } finally {
       setFormLoading(false);
     }
   };
 
-  // Admin Accepts Incoming Goods
+  // Admin Accepts Incoming Goods (Refills Stock)
   const handleAcceptGoods = async (id, name, qty) => {
     if (confirm(`Apakah Anda yakin menyetujui barang masuk: ${name} (+${qty} unit)? Stok aktif gudang akan terisi.`)) {
       try {
         const res = await api.post(`/goods/${id}/accept`);
-        alert(res.message || "Barang berhasil di-refill!");
+        alert(res.message);
         loadData();
       } catch (err) {
-        alert(err.response?.data?.message || err.message || "Gagal menyetujui barang masuk.");
+        alert(err.message || "Gagal menyetujui barang masuk.");
       }
     }
   };
 
   // Admin Deletes incorrect goods
   const handleDeleteGoods = async (id, name) => {
-    if (confirm(`Apakah Anda yakin menghapus data barang: ${name}?`)) {
+    if (confirm(`Apakah Anda yakin menghapus data barang: ${name}? (Tindakan ini untuk menghapus inputan yang tidak sesuai)`)) {
       try {
         await api.delete(`/goods/${id}`);
         loadData();
       } catch (err) {
-        alert(err.response?.data?.message || err.message || "Gagal menghapus barang.");
+        alert(err.message || "Gagal menghapus barang.");
       }
     }
   };
@@ -171,15 +162,15 @@ export default function Goods({ user }) {
         )}
       </div>
 
-      {/* Role Guide */}
+      {/* Role Guide Notification Badge */}
       <div className="card role-indicator-card">
         <span className="role-guide-icon">🔑</span>
         <div className="role-guide-text">
           <p>
             Mode Akses: <strong>{user?.role === 'Staff' ? 'Staff Operasional' : user?.role}</strong>. 
             {isStaff && " Anda dapat mendaftarkan barang kosong/baru serta menginput jumlah masuk ke gudang."}
-            {isAdmin && " Anda memiliki wewenang mengedit data barang, menghapus inputan yang tidak sesuai, dan melakukan 'Accept' barang masuk."}
-            {isManager && " Anda memiliki akses pantau (Read-Only) untuk melihat kondisi stok barang masuk."}
+            {isAdmin && " Anda memiliki wewenang mengedit data barang, menghapus inputan yang tidak sesuai, dan melakukan 'Accept' barang masuk untuk melakukan refill."}
+            {isManager && " Anda memiliki akses pantau (Read-Only) untuk melihat kondisi stok barang masuk sebelum disalurkan ke distributor."}
           </p>
         </div>
       </div>
@@ -214,7 +205,6 @@ export default function Goods({ user }) {
             value={warehouseFilter}
             onChange={(e) => setWarehouseFilter(e.target.value)}
           >
-            <option value="All">Semua Gudang</option>
             <option value="All">Semua Gudang</option>
             {warehouses.map(w => (
               <option key={w.id} value={w.id}>{w.name}</option>
@@ -257,11 +247,11 @@ export default function Goods({ user }) {
                   <td>
                     <div className="warehouse-cell-info">
                       <Warehouse size={14} className="cell-icon" />
-                      <span>{item.warehouseName || 'Tidak Diketahui'}</span>
+                      <span>{item.warehouseName}</span>
                     </div>
                   </td>
                   <td>
-                    <span className={`stock-badge ${Number(item.stock) === 0 ? 'stock-empty' : 'stock-available'}`}>
+                    <span className={`stock-badge ${item.stock === 0 ? 'stock-empty' : 'stock-available'}`}>
                       {item.stock} Unit
                     </span>
                   </td>
@@ -281,6 +271,7 @@ export default function Goods({ user }) {
                   </td>
                   <td>
                     <div className="workflow-actions">
+                      {/* Admin Actions */}
                       {isAdmin && (
                         <>
                           {item.status === 'Pending' && (
@@ -303,19 +294,21 @@ export default function Goods({ user }) {
                           <button 
                             className="action-btn delete" 
                             onClick={() => handleDeleteGoods(item.id, item.name)}
-                            title="Hapus Barang"
+                            title="Hapus Barang (Tidak Sesuai)"
                           >
                             <Trash2 size={13} />
                           </button>
                         </>
                       )}
 
+                      {/* Staff Actions */}
                       {isStaff && (
                         <span className="action-text-info">
                           {item.status === 'Pending' ? 'Menunggu Admin' : 'Refill Selesai'}
                         </span>
                       )}
 
+                      {/* Manager Actions */}
                       {isManager && (
                         <span className={`manager-view-badge ${item.status === 'Accepted' ? 'ready' : 'pending'}`}>
                           {item.status === 'Accepted' ? '✓ Siap Disalurkan' : '⚠ Tertahan di Inputan'}
@@ -330,7 +323,7 @@ export default function Goods({ user }) {
         </div>
       )}
 
-      {/* Modal Form */}
+      {/* Input / Edit Modal Form */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-container">
@@ -368,7 +361,7 @@ export default function Goods({ user }) {
                   <input 
                     type="text" 
                     className="form-control" 
-                    placeholder="Contoh: Semen Gresik"
+                    placeholder="Contoh: Semen Gresik / Cat Putih"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     required 
@@ -383,13 +376,17 @@ export default function Goods({ user }) {
                     onChange={(e) => setFormData({...formData, warehouseId: e.target.value})}
                     required
                   >
-                    <option value="">-- Pilih Gudang --</option>
-                    {warehouses.map(w => (
-                      <option key={w.id} value={w.id}>{w.name} ({w.location})</option>
-                    ))}
+                    {warehouses.length === 0 ? (
+                      <option value="">Tidak ada gudang aktif!</option>
+                    ) : (
+                      warehouses.map(w => (
+                        <option key={w.id} value={w.id}>{w.name} ({w.location})</option>
+                      ))
+                    )}
                   </select>
                 </div>
 
+                {/* If Staff is adding OR Admin is editing */}
                 {modalMode === 'add' ? (
                   <div className="form-group">
                     <label>Jumlah Barang Masuk (Refill Qty)</label>
@@ -401,6 +398,9 @@ export default function Goods({ user }) {
                       onChange={(e) => setFormData({...formData, incomingQty: e.target.value})}
                       required 
                     />
+                    <small style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+                      *Barang akan disetor ke database dengan status "Pending Approval" menunggu verifikasi Admin.
+                    </small>
                   </div>
                 ) : (
                   <>
@@ -460,6 +460,150 @@ export default function Goods({ user }) {
           </div>
         </div>
       )}
+
+      <style>{`
+        .goods-wrapper {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .role-indicator-card {
+          background-color: var(--primary-light);
+          border: 1px solid var(--secondary-2);
+          display: flex;
+          gap: 15px;
+          padding: 16px;
+          margin-bottom: 20px;
+          align-items: center;
+        }
+        .role-guide-icon {
+          font-size: 24px;
+        }
+        .role-guide-text p {
+          font-size: 12.5px;
+          color: var(--text-dark);
+          line-height: 1.5;
+        }
+
+        .filter-card {
+          margin-bottom: 20px;
+          padding: 16px;
+        }
+
+        .row-pending-glow {
+          background-color: rgba(230, 162, 60, 0.04);
+        }
+        .row-pending-glow:hover {
+          background-color: rgba(230, 162, 60, 0.08) !important;
+        }
+
+        .warehouse-cell-info {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 13px;
+        }
+        .cell-icon {
+          color: var(--text-muted);
+        }
+
+        .stock-badge {
+          display: inline-block;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 3px 8px;
+          border-radius: 6px;
+        }
+        .stock-empty {
+          background-color: var(--danger-light);
+          color: var(--danger);
+        }
+        .stock-available {
+          background-color: var(--light-bg);
+          color: var(--text-dark);
+          border: 1px solid var(--border-color);
+        }
+
+        .text-orange {
+          color: #d88f80;
+        }
+        
+        .font-semibold {
+          font-weight: 550;
+        }
+
+        .workflow-actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .accept-action-btn {
+          padding: 6px 12px;
+          font-size: 12px;
+          background-color: var(--success);
+          color: white;
+        }
+        .accept-action-btn:hover {
+          background-color: #529b2e;
+        }
+
+        .workflow-actions .action-btn {
+          width: 28px;
+          height: 28px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--light-bg);
+          color: var(--text-dark);
+          border: 1px solid var(--border-color);
+        }
+        .workflow-actions .action-btn.edit:hover {
+          background-color: var(--primary-light);
+          color: var(--primary-hover);
+          border-color: var(--primary-color);
+        }
+        .workflow-actions .action-btn.delete:hover {
+          background-color: var(--danger-light);
+          color: var(--danger);
+          border-color: var(--danger);
+        }
+
+        .action-text-info {
+          font-size: 12px;
+          color: var(--text-muted);
+          font-style: italic;
+        }
+
+        .manager-view-badge {
+          font-size: 11px;
+          font-weight: 600;
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
+        .manager-view-badge.ready {
+          background-color: var(--success-light);
+          color: var(--success);
+        }
+        .manager-view-badge.pending {
+          background-color: var(--warning-light);
+          color: var(--warning);
+        }
+
+        .modal-error-alert {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background-color: var(--danger-light);
+          color: var(--danger);
+          padding: 10px 14px;
+          border-radius: var(--border-radius-sm);
+          font-size: 12px;
+          margin-bottom: 15px;
+          border-left: 3px solid var(--danger);
+        }
+      `}</style>
     </div>
   );
 }
